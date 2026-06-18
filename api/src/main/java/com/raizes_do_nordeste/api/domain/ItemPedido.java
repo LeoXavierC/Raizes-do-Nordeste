@@ -5,32 +5,33 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "pagamentos")
+@Table(name = "itens_pedidos")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Pagamento {
+public class ItemPedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal valor;
-    private String status;
-    private String codigoTransacao;
-    private LocalDateTime dataProcessamento;
+    private Integer quantidade;
+    private BigDecimal precoUnitario;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id")
+    private Produto produto;
 }

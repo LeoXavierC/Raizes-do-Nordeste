@@ -1,14 +1,17 @@
 package com.raizes_do_nordeste.api.application.service;
 
+import com.raizes_do_nordeste.api.domain.Estoque;
 import com.raizes_do_nordeste.api.domain.ItemPedido;
 import com.raizes_do_nordeste.api.domain.Pedido;
 import com.raizes_do_nordeste.api.domain.Produto;
+import com.raizes_do_nordeste.api.infrastructure.repository.EstoqueRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ItemPedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,15 +20,18 @@ public class ItemPedidoService {
     private final ItemPedidoRepository itemPedidoRepository;
     private final PedidoRepository pedidoRepository;
     private final ProdutoRepository produtoRepository;
+    private final EstoqueRepository estoqueRepository;
 
     public ItemPedidoService(
             ItemPedidoRepository itemPedidoRepository,
             PedidoRepository pedidoRepository,
-            ProdutoRepository produtoRepository
+            ProdutoRepository produtoRepository,
+            EstoqueRepository estoqueRepository
     ) {
         this.itemPedidoRepository = itemPedidoRepository;
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
+        this.estoqueRepository = estoqueRepository;
     }
 
     public List<ItemPedido> listarTodos() {
@@ -44,6 +50,14 @@ public class ItemPedidoService {
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
+        Estoque estoque = estoqueRepository
+                .findByProdutoIdAndUnidadeId(produtoId, pedido.getUnidade().getId())
+                .orElseThrow(() -> new RuntimeException("Estoque não encontrado para este produto nesta unidade"));
+
+        if (estoque.getQuantidade() < quantidade) {
+            throw new RuntimeException("Estoque insuficiente");
+        }
+
         ItemPedido itemPedido = new ItemPedido();
         itemPedido.setPedido(pedido);
         itemPedido.setProduto(produto);
@@ -60,6 +74,10 @@ public class ItemPedidoService {
 
         pedido.setValorTotal(pedido.getValorTotal().add(valorItem));
         pedidoRepository.save(pedido);
+
+        estoque.setQuantidade(estoque.getQuantidade() - quantidade);
+        estoque.setUltimaAtualizacao(LocalDateTime.now());
+        estoqueRepository.save(estoque);
 
         return itemSalvo;
     }

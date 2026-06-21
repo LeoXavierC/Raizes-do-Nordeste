@@ -8,6 +8,7 @@ import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -49,6 +50,17 @@ public class ItemPedidoService {
         itemPedido.setQuantidade(quantidade);
         itemPedido.setPrecoUnitario(produto.getPreco());
 
-        return itemPedidoRepository.save(itemPedido);
+        ItemPedido itemSalvo = itemPedidoRepository.save(itemPedido);
+
+        BigDecimal valorItem = produto.getPreco().multiply(BigDecimal.valueOf(quantidade));
+
+        if (pedido.getValorTotal() == null) {
+            pedido.setValorTotal(BigDecimal.ZERO);
+        }
+
+        pedido.setValorTotal(pedido.getValorTotal().add(valorItem));
+        pedidoRepository.save(pedido);
+
+        return itemSalvo;
     }
 }

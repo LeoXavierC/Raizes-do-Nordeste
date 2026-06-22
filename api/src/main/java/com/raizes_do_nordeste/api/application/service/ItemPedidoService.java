@@ -9,6 +9,7 @@ import com.raizes_do_nordeste.api.infrastructure.repository.ItemPedidoRepository
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
+import com.raizes_do_nordeste.api.exception.EstoqueInsuficienteException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,7 +56,7 @@ public class ItemPedidoService {
                 .orElseThrow(() -> new RuntimeException("Estoque não encontrado para este produto nesta unidade"));
 
         if (estoque.getQuantidade() < quantidade) {
-            throw new RuntimeException("Estoque insuficiente");
+            throw new EstoqueInsuficienteException("Quantidade solicitada maior que o estoque disponível");
         }
 
         ItemPedido itemPedido = new ItemPedido();

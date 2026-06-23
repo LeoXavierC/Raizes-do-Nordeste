@@ -14,10 +14,16 @@ public class PagamentoService {
 
     private final PagamentoRepository pagamentoRepository;
     private final PedidoRepository pedidoRepository;
+    private final FidelidadeService fidelidadeService;
 
-    public PagamentoService(PagamentoRepository pagamentoRepository, PedidoRepository pedidoRepository) {
+    public PagamentoService(
+            PagamentoRepository pagamentoRepository,
+            PedidoRepository pedidoRepository,
+            FidelidadeService fidelidadeService
+    ) {
         this.pagamentoRepository = pagamentoRepository;
         this.pedidoRepository = pedidoRepository;
+        this.fidelidadeService = fidelidadeService;
     }
 
     public Pagamento processarPagamento(Long pedidoId) {
@@ -36,8 +42,12 @@ public class PagamentoService {
         pagamento.setDataProcessamento(LocalDateTime.now());
 
         pedido.setStatus("PAGO");
-
         pedidoRepository.save(pedido);
+
+        fidelidadeService.adicionarPontos(
+                pedido.getUsuario().getId(),
+                pedido.getValorTotal()
+        );
 
         return pagamentoRepository.save(pagamento);
     }

@@ -1,6 +1,7 @@
 package com.raizes_do_nordeste.api.security;
 
 import com.raizes_do_nordeste.api.domain.Usuario;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,31 @@ public class JwtService {
                 .expiration(expiracao)
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    public String extrairEmail(String token) {
+        return extrairClaims(token).getSubject();
+    }
+
+    public String extrairPerfil(String token) {
+        return extrairClaims(token).get("perfil", String.class);
+    }
+
+    public boolean tokenValido(String token) {
+        try {
+            Claims claims = extrairClaims(token);
+            return claims.getExpiration().after(new Date());
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    private Claims extrairClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private SecretKey getSecretKey() {

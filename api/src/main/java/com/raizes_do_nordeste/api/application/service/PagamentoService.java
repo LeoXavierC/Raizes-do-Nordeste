@@ -8,6 +8,7 @@ import com.raizes_do_nordeste.api.infrastructure.repository.PagamentoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class PagamentoService {
     public Pagamento processarPagamento(Long pedidoId) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado"));
+
         if (pagamentoRepository.existsByPedidoId(pedidoId)) {
             throw new PagamentoDuplicadoException("Pedido já possui pagamento processado");
         }
@@ -38,11 +40,20 @@ public class PagamentoService {
         Pagamento pagamento = new Pagamento();
         pagamento.setPedido(pedido);
         pagamento.setValor(pedido.getValorTotal());
-        pagamento.setStatus("APROVADO");
         pagamento.setCodigoTransacao("MOCK-" + UUID.randomUUID());
         pagamento.setDataProcessamento(LocalDateTime.now());
 
+        if (pedido.getValorTotal() == null || pedido.getValorTotal().compareTo(BigDecimal.ZERO) <= 0) {
+            pagamento.setStatus("RECUSADO");
+            pedido.setStatus("PAGAMENTO_RECUSADO");
+
+            pedidoRepository.save(pedido);
+            return pagamentoRepository.save(pagamento);
+        }
+
+        pagamento.setStatus("APROVADO");
         pedido.setStatus("PAGO");
+
         pedidoRepository.save(pedido);
 
         fidelidadeService.adicionarPontos(

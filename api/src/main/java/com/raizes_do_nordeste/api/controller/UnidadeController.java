@@ -2,6 +2,7 @@ package com.raizes_do_nordeste.api.controller;
 
 import com.raizes_do_nordeste.api.application.service.UnidadeService;
 import com.raizes_do_nordeste.api.domain.Unidade;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UnidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<Unidade> salvar(@RequestBody Unidade unidade) {
+    public ResponseEntity<Unidade> salvar(@Valid @RequestBody Unidade unidade) {
         Unidade unidadeSalva = unidadeService.salvar(unidade);
         return ResponseEntity.status(HttpStatus.CREATED).body(unidadeSalva);
     }

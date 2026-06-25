@@ -32,7 +32,7 @@ public class ItemPedidoController {
             @RequestParam Long produtoId,
             @RequestParam Integer quantidade
     ) {
-        ItemPedido itemPedido = itemPedidoService.salvar(pedidoId, produtoId, quantidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(itemPedido);
+        ItemPedido itemPedidoSalvo = itemPedidoService.salvar(pedidoId, produtoId, quantidade);
+        return ResponseEntity.status(HttpStatus.CREATED).body(itemPedidoSalvo);
     }
 }

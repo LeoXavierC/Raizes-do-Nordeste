@@ -39,6 +39,10 @@ public class EstoqueService {
     }
 
     public Estoque salvar(Long produtoId, Long unidadeId, Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero");
+        }
+
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado"));
 

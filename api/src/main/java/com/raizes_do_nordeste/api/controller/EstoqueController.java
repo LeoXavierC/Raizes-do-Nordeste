@@ -32,7 +32,7 @@ public class EstoqueController {
             @RequestParam Long unidadeId,
             @RequestParam Integer quantidade
     ) {
-        Estoque estoque = estoqueService.salvar(produtoId, unidadeId, quantidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(estoque);
+        Estoque estoqueSalvo = estoqueService.salvar(produtoId, unidadeId, quantidade);
+        return ResponseEntity.status(HttpStatus.CREATED).body(estoqueSalvo);
     }
 }

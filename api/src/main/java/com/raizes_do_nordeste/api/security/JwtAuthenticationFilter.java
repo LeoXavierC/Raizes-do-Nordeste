@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -50,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authorizationHeader.replace("Bearer ", "");
+        String token = authorizationHeader.replace("Bearer ", "").trim();
 
         if (!jwtService.tokenValido(token)) {
             filterChain.doFilter(request, response);
@@ -68,11 +69,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String perfil = usuario.getPerfil();
 
+        if (perfil == null || perfil.isBlank()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        perfil = perfil.trim().toUpperCase(Locale.ROOT);
+
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + perfil);
+
+        System.out.println("EMAIL AUTENTICADO: " + usuario.getEmail());
+        System.out.println("PERFIL AUTENTICADO: " + perfil);
+        System.out.println("AUTHORITY: " + authority.getAuthority());
+
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
                         usuario.getEmail(),
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + perfil))
+                        List.of(authority)
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

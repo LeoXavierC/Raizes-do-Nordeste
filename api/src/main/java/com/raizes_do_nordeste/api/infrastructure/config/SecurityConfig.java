@@ -27,7 +27,8 @@ public class SecurityConfig {
                 "/auth/**",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
-                "/v3/api-docs/**"
+                "/v3/api-docs/**",
+                "/v3/api-docs"
         );
     }
 
@@ -43,9 +44,14 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .requestMatchers("/usuarios/**").permitAll()
+                        .requestMatchers("/usuarios", "/usuarios/**").permitAll()
 
-                        .requestMatchers("/produtos/**", "/estoques/**").hasRole("GERENTE")
+                        .requestMatchers(
+                                "/produtos",
+                                "/produtos/**",
+                                "/estoques",
+                                "/estoques/**"
+                        ).hasAuthority("ROLE_GERENTE")
 
                         .anyRequest().authenticated()
                 )

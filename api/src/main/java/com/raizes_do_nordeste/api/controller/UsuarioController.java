@@ -2,6 +2,7 @@ package com.raizes_do_nordeste.api.controller;
 
 import com.raizes_do_nordeste.api.application.service.UsuarioService;
 import com.raizes_do_nordeste.api.domain.Usuario;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> salvar(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> salvar(@Valid @RequestBody Usuario usuario) {
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }

@@ -46,6 +46,10 @@ public class ItemPedidoService {
     }
 
     public ItemPedido salvar(Long pedidoId, Long produtoId, Integer quantidade) {
+        if (quantidade == null || quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero");
+        }
+
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado"));
 

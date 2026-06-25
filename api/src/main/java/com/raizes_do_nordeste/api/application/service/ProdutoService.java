@@ -1,6 +1,7 @@
 package com.raizes_do_nordeste.api.application.service;
 
 import com.raizes_do_nordeste.api.domain.Produto;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class ProdutoService {
 
     public Produto buscarPorId(Long id) {
         return produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado"));
     }
 
     public Produto salvar(Produto produto) {

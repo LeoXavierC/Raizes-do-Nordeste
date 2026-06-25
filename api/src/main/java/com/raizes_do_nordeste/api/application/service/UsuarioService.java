@@ -1,6 +1,7 @@
 package com.raizes_do_nordeste.api.application.service;
 
 import com.raizes_do_nordeste.api.domain.Usuario;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class UsuarioService {
 
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
     }
 
     public Usuario salvar(Usuario usuario) {

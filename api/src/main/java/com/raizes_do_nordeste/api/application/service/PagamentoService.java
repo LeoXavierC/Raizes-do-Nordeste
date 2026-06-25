@@ -2,6 +2,8 @@ package com.raizes_do_nordeste.api.application.service;
 
 import com.raizes_do_nordeste.api.domain.Pagamento;
 import com.raizes_do_nordeste.api.domain.Pedido;
+import com.raizes_do_nordeste.api.exception.PagamentoDuplicadoException;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.PagamentoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
@@ -28,10 +30,9 @@ public class PagamentoService {
 
     public Pagamento processarPagamento(Long pedidoId) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
-
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado"));
         if (pagamentoRepository.existsByPedidoId(pedidoId)) {
-            throw new RuntimeException("Pedido já possui pagamento processado");
+            throw new PagamentoDuplicadoException("Pedido já possui pagamento processado");
         }
 
         Pagamento pagamento = new Pagamento();

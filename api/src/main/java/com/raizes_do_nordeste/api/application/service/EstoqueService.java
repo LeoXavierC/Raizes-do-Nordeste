@@ -3,6 +3,7 @@ package com.raizes_do_nordeste.api.application.service;
 import com.raizes_do_nordeste.api.domain.Estoque;
 import com.raizes_do_nordeste.api.domain.Produto;
 import com.raizes_do_nordeste.api.domain.Unidade;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.EstoqueRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.UnidadeRepository;
@@ -34,15 +35,15 @@ public class EstoqueService {
 
     public Estoque buscarPorId(Long id) {
         return estoqueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Estoque não encontrado"));
     }
 
     public Estoque salvar(Long produtoId, Long unidadeId, Integer quantidade) {
         Produto produto = produtoRepository.findById(produtoId)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado"));
 
         Unidade unidade = unidadeRepository.findById(unidadeId)
-                .orElseThrow(() -> new RuntimeException("Unidade não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Unidade não encontrada"));
 
         Estoque estoque = new Estoque();
         estoque.setProduto(produto);

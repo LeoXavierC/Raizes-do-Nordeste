@@ -2,6 +2,7 @@ package com.raizes_do_nordeste.api.application.service;
 
 import com.raizes_do_nordeste.api.domain.Fidelidade;
 import com.raizes_do_nordeste.api.domain.Usuario;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.FidelidadeRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,12 @@ public class FidelidadeService {
 
     public Fidelidade buscarPorUsuarioId(Long usuarioId) {
         return fidelidadeRepository.findByUsuarioId(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Fidelidade não encontrada para este usuário"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Fidelidade não encontrada para este usuário"));
     }
 
     public Fidelidade adicionarPontos(Long usuarioId, BigDecimal valorPago) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado"));
 
         int pontosGanhos = valorPago.intValue();
 

@@ -4,12 +4,13 @@ import com.raizes_do_nordeste.api.domain.Estoque;
 import com.raizes_do_nordeste.api.domain.ItemPedido;
 import com.raizes_do_nordeste.api.domain.Pedido;
 import com.raizes_do_nordeste.api.domain.Produto;
+import com.raizes_do_nordeste.api.exception.EstoqueInsuficienteException;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.EstoqueRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ItemPedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
 import org.springframework.stereotype.Service;
-import com.raizes_do_nordeste.api.exception.EstoqueInsuficienteException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,19 +42,19 @@ public class ItemPedidoService {
 
     public ItemPedido buscarPorId(Long id) {
         return itemPedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item do pedido não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Item do pedido não encontrado"));
     }
 
     public ItemPedido salvar(Long pedidoId, Long produtoId, Integer quantidade) {
         Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado"));
 
         Produto produto = produtoRepository.findById(produtoId)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado"));
 
         Estoque estoque = estoqueRepository
                 .findByProdutoIdAndUnidadeId(produtoId, pedido.getUnidade().getId())
-                .orElseThrow(() -> new RuntimeException("Estoque não encontrado para este produto nesta unidade"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Estoque não encontrado para este produto nesta unidade"));
 
         if (estoque.getQuantidade() < quantidade) {
             throw new EstoqueInsuficienteException("Quantidade solicitada maior que o estoque disponível");

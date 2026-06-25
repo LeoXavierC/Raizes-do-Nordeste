@@ -1,6 +1,7 @@
 package com.raizes_do_nordeste.api.application.service;
 
 import com.raizes_do_nordeste.api.domain.Pedido;
+import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class PedidoService {
 
     public Pedido buscarPorId(Long id) {
         return pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pedido não encontrado"));
     }
 
     public Pedido salvar(Pedido pedido) {

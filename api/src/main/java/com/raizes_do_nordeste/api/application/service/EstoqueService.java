@@ -43,6 +43,10 @@ public class EstoqueService {
             throw new IllegalArgumentException("Quantidade deve ser maior que zero");
         }
 
+        if (estoqueRepository.findByProdutoIdAndUnidadeId(produtoId, unidadeId).isPresent()) {
+            throw new IllegalArgumentException("Estoque já cadastrado para este produto nesta unidade");
+        }
+
         Produto produto = produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto não encontrado"));
 

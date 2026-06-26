@@ -6,6 +6,8 @@ import com.raizes_do_nordeste.api.exception.PagamentoDuplicadoException;
 import com.raizes_do_nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes_do_nordeste.api.infrastructure.repository.PagamentoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @Service
 public class PagamentoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PagamentoService.class);
 
     private final PagamentoRepository pagamentoRepository;
     private final PedidoRepository pedidoRepository;
@@ -48,6 +52,13 @@ public class PagamentoService {
             pedido.setStatus("PAGAMENTO_RECUSADO");
 
             pedidoRepository.save(pedido);
+
+            logger.warn(
+                    "Pagamento recusado: pedidoId={}, valor={}",
+                    pedido.getId(),
+                    pedido.getValorTotal()
+            );
+
             return pagamentoRepository.save(pagamento);
         }
 
@@ -59,6 +70,13 @@ public class PagamentoService {
         fidelidadeService.adicionarPontos(
                 pedido.getUsuario().getId(),
                 pedido.getValorTotal()
+        );
+
+        logger.info(
+                "Pagamento aprovado: pedidoId={}, valor={}, codigoTransacao={}",
+                pedido.getId(),
+                pedido.getValorTotal(),
+                pagamento.getCodigoTransacao()
         );
 
         return pagamentoRepository.save(pagamento);

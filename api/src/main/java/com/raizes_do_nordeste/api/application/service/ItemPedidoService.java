@@ -10,6 +10,8 @@ import com.raizes_do_nordeste.api.infrastructure.repository.EstoqueRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ItemPedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.PedidoRepository;
 import com.raizes_do_nordeste.api.infrastructure.repository.ProdutoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +20,8 @@ import java.util.List;
 
 @Service
 public class ItemPedidoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ItemPedidoService.class);
 
     private final ItemPedidoRepository itemPedidoRepository;
     private final PedidoRepository pedidoRepository;
@@ -85,6 +89,20 @@ public class ItemPedidoService {
         estoque.setUltimaAtualizacao(LocalDateTime.now());
         estoqueRepository.save(estoque);
 
+        logger.info(
+                "Item adicionado ao pedido: pedidoId={}, produtoId={}, quantidade={}, valorItem={}",
+                pedido.getId(),
+                produto.getId(),
+                quantidade,
+                valorItem
+        );
+
+        logger.info(
+                "Estoque atualizado: produtoId={}, unidadeId={}, quantidadeAtual={}",
+                produto.getId(),
+                pedido.getUnidade().getId(),
+                estoque.getQuantidade()
+        );
         return itemSalvo;
     }
 }

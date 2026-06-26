@@ -53,6 +53,17 @@ public class SecurityConfig {
                                 "/estoques/**"
                         ).hasAuthority("ROLE_GERENTE")
 
+                        .requestMatchers(
+                                "/pedidos",
+                                "/pedidos/**",
+                                "/itens-pedidos",
+                                "/itens-pedidos/**",
+                                "/pagamentos",
+                                "/pagamentos/**",
+                                "/fidelidade",
+                                "/fidelidade/**"
+                        ).authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
